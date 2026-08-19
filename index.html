@@ -187,14 +187,18 @@
   }
   .submit:hover{transform:translateY(-1px);filter:brightness(1.05)}
   .submit:active{transform:translateY(0)}
+  .submit:disabled{opacity:.65;cursor:wait;transform:none}
+
+  .form-msg{
+    margin-top:16px;border-radius:12px;padding:16px 18px;font-size:15px;line-height:1.7;
+    text-align:center;font-weight:500;
+  }
+  .form-msg.ok{background:#e8f0d6;border:1px solid var(--olive-bright);color:var(--olive-deep)}
+  .form-msg.err{background:#fbe6e0;border:1px solid #d68a72;color:#a4432a}
 
   .foot{text-align:center;margin-top:30px;font-size:13px;color:#8a866c;line-height:1.9}
   .foot b{color:var(--olive-deep)}
 
-  .note-config{
-    font-size:12.5px;color:#9a7a2a;background:#fdf6e3;border:1px dashed #e0c877;
-    border-radius:10px;padding:12px 14px;margin-bottom:22px;
-  }
 </style>
 </head>
 <body>
@@ -237,14 +241,7 @@
     </ul>
   </div>
 
-  <!-- ⚙️ 設定提醒(部署前請刪除此區塊) -->
-  <div class="note-config">
-    ⚙️ <b>部署前設定:</b>此表單需接一個免費收單服務才能收到訂單。到
-    <b>formspree.io</b> 免費註冊 → 建立表單 → 取得你的表單網址,再把下方
-    <code>&lt;form&gt;</code> 的 <code>action</code> 換成該網址即可。完成後請刪除這段黃色提示。
-  </div>
-
-  <form action="https://formspree.io/f/your-form-id" method="POST">
+  <form id="orderForm">
 
     <!-- 訂購人 -->
     <div class="sec">
@@ -377,7 +374,9 @@
       <div class="row"><span class="ship" id="shipTxt">四人合寄同址免運費 ‧ 單獨寄送依實際運費計</span></div>
     </div>
 
-    <button class="submit" type="submit">送出訂單 ‧ 品嚐純淨好油 🫒</button>
+    <button class="submit" type="submit" id="submitBtn">送出訂單 ‧ 品嚐純淨好油 🫒</button>
+
+    <div id="formMsg" class="form-msg" style="display:none"></div>
   </form>
 
   <div class="foot">
@@ -389,6 +388,9 @@
 </div>
 
 <script>
+  // ⚙️⚙️⚙️ 只需修改這一行:把下面的網址換成你的 Google Apps Script 網址 ⚙️⚙️⚙️
+  var GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzklaZMD0kj7vRCKdLeKkjU0A8G35tlQGr95UTz8vsGn-yfQxL5YHQLVB9F4h8e_3T_/exec";
+
   // 依寄送方式調整運費說明
   var shipMode = document.getElementById('shipMode');
   var shipTxt  = document.getElementById('shipTxt');
@@ -399,6 +401,47 @@
       shipTxt.textContent = '單獨寄送依實際運費計算,詳情由客服聯繫';
     }
   });
+
+  // 送出訂單到 Google 試算表
+  var form = document.getElementById('orderForm');
+  var btn  = document.getElementById('submitBtn');
+  var msg  = document.getElementById('formMsg');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    if(GOOGLE_SCRIPT_URL.indexOf('script.google.com') === -1){
+      showMsg('err', '⚠️ 表單尚未完成設定,請聯繫管理員。');
+      return;
+    }
+
+    btn.disabled = true;
+    var original = btn.textContent;
+    btn.textContent = '訂單送出中…';
+    msg.style.display = 'none';
+
+    var data = new FormData(form);
+    fetch(GOOGLE_SCRIPT_URL, { method:'POST', body:data })
+      .then(function(){
+        form.reset();
+        shipTxt.textContent = '四人合寄同址免運費 ‧ 單獨寄送依實際運費計';
+        showMsg('ok', '🫒 訂單已送出,感恩您的護持!我們將盡快與您聯繫確認出貨事宜。');
+        btn.textContent = original;
+        btn.disabled = false;
+        msg.scrollIntoView({behavior:'smooth', block:'center'});
+      })
+      .catch(function(){
+        showMsg('err', '訂單送出時發生問題,請稍後再試,或透過 ACC LINE 官方帳號直接向我們訂購。');
+        btn.textContent = original;
+        btn.disabled = false;
+      });
+  });
+
+  function showMsg(type, text){
+    msg.className = 'form-msg ' + type;
+    msg.textContent = text;
+    msg.style.display = 'block';
+  }
 </script>
 
 </body>
