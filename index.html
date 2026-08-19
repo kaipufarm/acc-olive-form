@@ -252,8 +252,8 @@
   <div class="rules">
     <h3>訂購辦法</h3>
     <ul>
-      <li><span>1</span>每人現購一組(買一送一,共 2 瓶),須<b>實名登記</b>。</li>
-      <li><span>2</span>四人可合寄同一個地址,<b>免運費</b>。</li>
+      <li><span>1</span>每人限購一組(買一送一,共 2 瓶),須<b>實名登記</b>,恕不接受一人訂購兩組以上。</li>
+      <li><span>2</span>不同 4 人可合寄同一地址(共 4 組),<b>免運費</b>;未滿 4 組每筆運費 <b>NT$130</b>。</li>
       <li><span>3</span>每瓶 250ml,每組售價 NT$500。</li>
     </ul>
   </div>
@@ -288,7 +288,7 @@
         <span class="lab">訂購組數</span>
         <input type="text" name="訂購組數" value="1 組(買1送1,共2瓶)" readonly
                style="background:#f4f0e2;color:#6b6850;cursor:not-allowed">
-        <div class="qty-note">依活動辦法,每位實名訂購人限購一組。若需多組,請由不同家人分別實名登記。</div>
+        <div class="qty-note">每位實名訂購人限購一組,不能一人訂購兩組以上。若想多組,請由不同的人分別實名登記(合寄)。</div>
       </label>
     </div>
 
@@ -339,14 +339,14 @@
         <span class="hint">同址最多四人</span>
       </div>
       <p style="font-size:14px;color:#6b6850;margin-bottom:16px">
-        四人合寄同一地址即免運費。若您選擇合寄,請在下方填寫其他訂購人的實名資料(每人一組)。單獨寄送可略過此區。
+        由不同的 4 個人合寄同一地址(每人一組,共 4 組)即免運費。若您要合寄,請在下方填寫其他訂購人的實名資料(每人限一組)。單獨寄送可略過此區,運費為 NT$130。
       </p>
 
       <div class="person">
         <div class="ptag">合寄人 2</div>
         <div class="grid2">
           <label class="f"><span class="lab">姓名(實名)</span>
-            <input type="text" name="合寄人2姓名"></label>
+            <input type="text" name="合寄人2姓名" class="coship-name"></label>
           <label class="f"><span class="lab">手機</span>
             <input type="tel" name="合寄人2手機"></label>
         </div>
@@ -355,7 +355,7 @@
         <div class="ptag">合寄人 3</div>
         <div class="grid2">
           <label class="f"><span class="lab">姓名(實名)</span>
-            <input type="text" name="合寄人3姓名"></label>
+            <input type="text" name="合寄人3姓名" class="coship-name"></label>
           <label class="f"><span class="lab">手機</span>
             <input type="tel" name="合寄人3手機"></label>
         </div>
@@ -364,7 +364,7 @@
         <div class="ptag">合寄人 4</div>
         <div class="grid2">
           <label class="f"><span class="lab">姓名(實名)</span>
-            <input type="text" name="合寄人4姓名"></label>
+            <input type="text" name="合寄人4姓名" class="coship-name"></label>
           <label class="f"><span class="lab">手機</span>
             <input type="tel" name="合寄人4手機"></label>
         </div>
@@ -413,11 +413,16 @@
 
     <!-- 結算 -->
     <div class="summary">
-      <div class="row"><span>特級初榨橄欖油 250ml × 2 瓶(買1送1)</span><span>1 組</span></div>
-      <div class="row"><span>單價</span><span>NT$500</span></div>
-      <div class="row total"><span>應付金額</span><b id="totalTxt">NT$500</b></div>
-      <div class="row"><span class="ship" id="shipTxt">四人合寄同址免運費 ‧ 單獨寄送依實際運費計</span></div>
+      <div class="row"><span>特級初榨橄欖油 250ml × 2 瓶(買1送1)/ 組</span><span id="groupTxt">1 組</span></div>
+      <div class="row"><span>商品小計(NT$500 / 組)</span><span id="subtotalTxt">NT$500</span></div>
+      <div class="row"><span>運費</span><span id="shipFeeTxt">NT$130</span></div>
+      <div class="row total"><span>應付金額</span><b id="totalTxt">NT$630</b></div>
+      <div class="row"><span class="ship" id="shipTxt">滿 4 組同地址免運費 ‧ 1~3 組運費 NT$130</span></div>
     </div>
+
+    <input type="hidden" name="訂購總組數" id="groupsField" value="1">
+    <input type="hidden" name="運費" id="shipFeeField" value="130">
+    <input type="hidden" name="應付金額" id="amountField" value="630">
 
     <button class="submit" type="submit" id="submitBtn">送出訂單 ‧ 品嚐純淨好油 🫒</button>
 
@@ -440,12 +445,50 @@
   // 依寄送方式調整運費說明
   var shipMode = document.getElementById('shipMode');
   var shipTxt  = document.getElementById('shipTxt');
-  shipMode.addEventListener('change', function(){
-    if(this.value === '四人合寄'){
-      shipTxt.textContent = '✓ 四人合寄同一地址,免運費';
-    }else if(this.value === '單獨寄送'){
-      shipTxt.textContent = '單獨寄送依實際運費計算,詳情由客服聯繫';
+  var groupTxt = document.getElementById('groupTxt');
+  var subtotalTxt = document.getElementById('subtotalTxt');
+  var shipFeeTxt = document.getElementById('shipFeeTxt');
+  var totalTxt = document.getElementById('totalTxt');
+  var groupsField = document.getElementById('groupsField');
+  var shipFeeField = document.getElementById('shipFeeField');
+  var amountField = document.getElementById('amountField');
+  var coshipNames = document.querySelectorAll('.coship-name');
+  var UNIT_PRICE = 500;
+  var SHIP_FEE = 130;
+
+  // 重新計算組數、運費與應付金額
+  function recalcTotal(){
+    var groups = 1; // 訂購人本人一定算一組
+    if(shipMode.value === '四人合寄'){
+      // 每一位有填姓名的合寄人,各算一組
+      coshipNames.forEach(function(input){
+        if(input.value.trim() !== ''){ groups++; }
+      });
     }
+    if(groups > 4){ groups = 4; } // 上限四人
+
+    var subtotal = groups * UNIT_PRICE;
+    // 滿 4 組同地址免運;1~3 組運費 130
+    var fee = (groups >= 4) ? 0 : SHIP_FEE;
+    var amount = subtotal + fee;
+
+    groupTxt.textContent = groups + ' 組';
+    subtotalTxt.textContent = 'NT$' + subtotal.toLocaleString();
+    shipFeeTxt.textContent = (fee === 0) ? '免運費' : 'NT$' + fee;
+    totalTxt.textContent = 'NT$' + amount.toLocaleString();
+
+    groupsField.value = groups;
+    shipFeeField.value = fee;
+    amountField.value = amount;
+  }
+
+  shipMode.addEventListener('change', function(){
+    recalcTotal();
+  });
+
+  // 合寄人姓名一有變動就重算金額
+  coshipNames.forEach(function(input){
+    input.addEventListener('input', recalcTotal);
   });
 
   // 送出訂單到 Google 試算表
@@ -470,7 +513,8 @@
     fetch(GOOGLE_SCRIPT_URL, { method:'POST', body:data })
       .then(function(){
         form.reset();
-        shipTxt.textContent = '四人合寄同址免運費 ‧ 單獨寄送依實際運費計';
+        shipTxt.textContent = '滿 4 組同地址免運費 ‧ 1~3 組運費 NT$130';
+        recalcTotal();
         showMsg('ok', '🫒 訂單已送出,感恩您的護持!我們將盡快與您聯繫確認出貨事宜。');
         btn.textContent = original;
         btn.disabled = false;
