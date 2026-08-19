@@ -157,6 +157,23 @@
     border-radius:0 8px 8px 0;margin-top:4px;
   }
 
+  .pay-box{
+    background:var(--cream);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;margin-bottom:18px;
+  }
+  .pay-box .pay-title{font-size:13px;color:#7a765f;letter-spacing:.04em;margin-bottom:4px}
+  .pay-box .pay-account{
+    font-family:"Noto Serif TC",serif;font-weight:700;font-size:22px;
+    color:var(--olive-deep);letter-spacing:.03em;
+  }
+  .pay-box .pay-bank{font-size:14px;color:#585541;margin-top:3px}
+  .pay-box .pay-name{font-size:14px;color:#585541;margin-top:2px}
+  .pay-box .pay-note{
+    font-size:13px;color:#585541;margin-top:10px;line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:10px;
+  }
+  .pay-box .pay-note b{color:var(--olive-deep)}
+
   /* co-ship people */
   .person{
     border:1px dashed var(--line);border-radius:12px;padding:16px 16px 4px;
@@ -354,10 +371,38 @@
       </div>
     </div>
 
-    <!-- 備註 -->
+    <!-- 匯款資訊 -->
     <div class="sec">
       <div class="sec-title">
         <div class="n">4</div>
+        <h3>匯款資訊</h3>
+        <span class="hint">完成匯款後填寫</span>
+      </div>
+
+      <div class="pay-box">
+        <div class="pay-title">匯款帳號</div>
+        <div class="pay-account">101-102-376-642</div>
+        <div class="pay-bank">高雄銀行 營業部(銀行代號 016)</div>
+        <div class="pay-name">戶名:財團法人普賢教育基金會</div>
+        <div class="pay-note">完成匯款後,請於下方填寫您匯款帳號的<b>末 5 碼</b>與匯款日期,以利工作人員快速核對款項。</div>
+      </div>
+
+      <label class="f">
+        <span class="lab">匯款帳號末 5 碼</span>
+        <input type="text" name="匯款末5碼" inputmode="numeric" maxlength="5"
+               pattern="[0-9]{5}" placeholder="匯款後填寫,方便對帳(選填)">
+      </label>
+
+      <label class="f">
+        <span class="lab">匯款日期</span>
+        <input type="text" name="匯款日期" placeholder="例如:2026/09/15(選填)">
+      </label>
+    </div>
+
+    <!-- 備註 -->
+    <div class="sec">
+      <div class="sec-title">
+        <div class="n">5</div>
         <h3>備註</h3>
       </div>
       <label class="f">
@@ -382,7 +427,8 @@
   <div class="foot">
     <b>開普農莊 Cape Farm</b> ‧ ACC 阿彌陀佛關懷中心<br>
     今年手摘 ‧ 低溫初榨特級橄欖油 ‧ 新鮮到港<br>
-    如有訂購問題,歡迎透過 ACC LINE 官方帳號洽詢。
+    訂購專線:07-3478620 ‧ 0911-060-367<br>
+    如有訂購問題,歡迎加入 高雄 ACC LINE 好友洽詢。
   </div>
 
 </div>
